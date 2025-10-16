@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Helm - packaging and versioning an app</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2em; background: #f9f9f9; color: #222; }
+    h1, h2, h3, h4 { color: #2c3e50; }
+    pre, code { background: #f4f4f4; padding: 2px 6px; border-radius: 4px; }
+    table { border-collapse: collapse; margin: 1em 0; }
+    th, td { border: 1px solid #ccc; padding: 6px 12px; }
+    th { background: #eee; }
+    a { color: #2980b9; }
+    hr { border: none; border-top: 1px solid #ccc; margin: 2em 0; }
+  </style>
+</head>
+<body>
+<h1>Helm - packaging and versioning an app</h1>
+<h2>Packing Applications with Helm for Kubernetes</h2>
+<p>by Philippe Collignon</p>
+<p><a href="./images/Helm">Helm Images Folder</a></p>
+<h2>Links</h2>
+<p><a href="https://github.com/phcollignon/helm3">https://github.com/phcollignon/helm3</a></p>
+<h2>Helm charts repositories</h2>
+<ul>
+  <li><a href="https://artifacthub.io">https://artifacthub.io</a></li>
+</ul>
+<h4>install mongodb Example</h4>
+<ul>
+  <li>helm repo add bitnami https:..charts/bitnami.com/bitnami</li>
+  <li>helm install my-relase bitnami/mongodb</li>
+</ul>
+<hr>
+<h2>install minikube</h2>
+<p>Link: <a href="http:/minikube.sigs.k8s.io">http:/minikube.sigs.k8s.io</a></p>
+<h4>install minikube (This is a K8s cluster running on docker)</h4>
+<ul>
+  <li>curl -LO https://storage.googleapis.com/minikube/releases/latest/minkube-linux-amd64</li>
+  <li>sudo install minkube-linux-amd64 /usr/local/bin/minikube</li>
+  <li>minikube version</li>
+  <li>minikube start</li>
+  <li>minikube status --&gt; Check that cluster is running</li>
+  <li>minikube addons enable ingress --&gt; we need it to access the demo</li>
+  <li>minikube ip --&gt; get the cluster ip</li>
+  <li>sudo vi /etc/hosts --&gt; adding the ip</li>
+  <li>minikube tunnel (for MAC os)</li>
+</ul>
+<hr>
+<h4>install kubectl</h4>
+<ul>
+  <li>curl -o kubectl https://storage.googleapis.com/kubernetes-release/release/v1.23.3/bin/linux/amd64/kubectl</li>
+  <li>chmod u+x kubectl</li>
+  <li>sudo mv kubectl /usr/local/bin</li>
+  <li>kubectl version --short</li>
+  <li>kubectl config view</li>
+</ul>
+<hr>
+<h3>install helm</h3>
+<p>Link: <a href="https://helm.sh/">https://helm.sh/</a></p>
+<ul>
+  <li>curl -LO https://get.helm.sh/helm-v3.8.2-linux-amd64.tar.gz</li>
+  <li>tar -zxvf helm-v3.8.2-linux-amd64.tar.gz</li>
+  <li>sudo mv linux-amd64/helm /usr/local/bin/helm</li>
+  <li>helm version --short</li>
+  <li>helm repo add stable https:// charts.helm.sh/stable --&gt; install offical helm charts repository (This https:// charts.helm.sh/stable is not maintain any more so you need to work with thired party repositories)</li>
+  <li>helm repo add myrepo http://myserver.org/charts</li>
+  <li>helm repo remove myrepo</li>
+  <li>helm install demo-mysql stable/mysql --&gt; install mysql for the demo from the offical hem charts repository. After that we can invoke kubectl get all | grep mysql and see the demo- mysql</li>
+</ul>
+<hr>
+<h3>uninstall helm (demo-mysql)</h3>
+<ul>
+  <li>helm uninstall demo-mysql</li>
+</ul>
+<h2>helm commands</h2>
+<ul>
+  <li>helm install [release] [chart] --&gt; Install a Release<ul><li>Example: helm install demo-gustbook gustbook</li></ul></li>
+  <li>helm upgrade [release] [chart] --&gt; Upgrade a Release revision (Like for a new app version)</li>
+  <li>helm upgrade -i [release] [chart] --debug --&gt; Upgrade the Helm release [release] using chart at [chart], or install it if it doesn’t exist<ul><li>You can use also --install insted of -i</li></ul></li>
+  <li>helm rollback [release] [chart] --&gt; Rollback to a Release revision<ul><li>Example rollback demo-gustbook 1 --&gt; rollback to the release demo-gustbook and to revision 1</li></ul></li>
+  <li>helm history [release] --&gt; Print Release history</li>
+  <li>helm status [release] --&gt; Display Release status</li>
+  <li>helm get all [release] --&gt; Show details of a release</li>
+  <li>helm uninstall [release] --&gt; Uninstall a release</li>
+  <li>helm uninstall --keep-history [release] --&gt; Uninstall a release but keep the history in the helm tree</li>
+  <li>helm list --&gt; List Releases<ul><li>Example: helm list --short</li></ul></li>
+  <li>helm get manifest [release]<ul><li>Example: helm get manifest demo-gustbook | less</li></ul></li>
+  <li>helm repo list --&gt; list all the repositories in your repo</li>
+  <li>helm inspect [all or readme or chart or values] [chart_name]</li>
+  <li>helm show values chart_name</li>
+  <li>helm fetch chart_name --&gt; download a chart without dependencies</li>
+  <li>helm dependency update chart_name --&gt; download stable dependecies into the chart subfolders</li>
+</ul>
+<h4>Helm Template Test</h4>
+<table>
+  <tr><th>static</th><th>Dynamic</th></tr>
+  <tr><td>helm template [chart]</td><td>helm install [release][chart] --dry-run --debug</td></tr>
+  <tr><td>works without K8s cluster</td><td>real helm install but without commit</td></tr>
+  <tr><td>static release-name</td><td>can generate a release-name</td></tr>
+</table>
+<ul>
+  <li>helm template [chart] --&gt; Check the chart, it display the maifest build by the engine</li>
+  <li>helm install [release][chart] --dry-run --debug --&gt; check the cart with more display computed values</li>
+  <li>helm install [release][chart] --dry-run --debug 2&gt;&amp;1 |less</li>
+</ul>
+<h3>Functions and Pipelines</h3>
+<ul>
+  <li>Go text/template packages <a href="http://golang.org/pkg/text/template">http://golang.org/pkg/text/template</a></li>
+  <li>Sprig functions project <a href="http://masterminds.github.io/sprig">http://masterminds.github.io/sprig</a></li>
+  <li>Helm project <a href="http:/helm.sh">http:/helm.sh</a></li>
+</ul>
+<h3>Packaging a Chart</h3>
+<ul>
+  <li>helm package [cart_name]</li>
+  <li>helm repo index . --&gt; create the index.html file in the folder containg the helm charts</li>
+  <li>helm package --sign --&gt; sign a chart with a valid pgp key</li>
+  <li>helm verify chart.tgz</li>
+  <li>helm install --verify</li>
+  <li>Thired party repository
+    <ul>
+      <li>curl -LO https://s3.amazonaws.com/chartmuseum/release/latest/bin/linux/amd64/chartmuseum</li>
+      <li>chmod u+x chartmuseum --&gt; make it executable</li>
+      <li>sudo mv chartmuseum /usr/local/bin --&gt; Move it to the executable folder</li>
+      <li>mkdir ~/helm/repo --&gt; storage location for the repository in the demo</li>
+      <li>chartmuseum --storage="local" --storage-local-rootdir=/home/me/helm/repo --&gt; to start chartmuseum and it will listen in port 8080</li>
+      <li>cp *.tgz /home/me/helm/repo --&gt; copy the tgz charts to the local storage</li>
+      <li>curl http://localhost:8080/api/charts | jq . --&gt; create a request to get the list of charts</li>
+      <li>helm repo add chartmuseum http://localhost:8080</li>
+      <li>helm search repo chartmuseum/ --&gt; to display which charts are available in the chart repository</li>
+    </ul>
+  </li>
+  <li>helm dependency update [chart_name] --&gt; download the sub dependencies</li>
+  <li>helm dependency list [chart_name] --&gt; to check which carts are a vailables</li>
+  <li>helm dependency build [chart_name] --&gt; to stick with the same subcharts versions as mentioed in Chart.lock file so we get the same versions</li>
+</ul>
+</body>
+</html>
