@@ -4,6 +4,8 @@
 - https://github.com/istio
 - https://github.com/istio/istio.io
 
+- Istio & Service Mesh -simply explained in 15 mins https://www.youtube.com/watch?v=16fgzklcF7Y
+
 ### What is a service mesh
 service mesh - It's the communication layer between software components, made into its own thing.
 - a component is register to a service mesh and it create a network proxy as a side car in the same pod (middleman) so in the service mesh we can declare the address, timeout, retry, encryption so the communication to other componenets are via Istio, So Istio is controling the network traffic, It can help with digging a performance issue and debug failures.
